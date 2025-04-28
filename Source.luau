@@ -28,10 +28,12 @@ end
 
 -- Функція для створення GUI таймерів
 local function CreateRaidTimers()
-    -- Перевірка на мобільну платформу
     local player = game.Players.LocalPlayer
+    local playerGui = player:WaitForChild("PlayerGui")
+
+    -- Створення GUI для таймерів
     local screenGui = Instance.new("ScreenGui")
-    screenGui.Parent = player.PlayerGui
+    screenGui.Parent = playerGui
 
     -- Стиль для таймерів
     local timerStyle = {
