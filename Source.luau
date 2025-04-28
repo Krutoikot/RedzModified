@@ -1,5 +1,4 @@
--- Official Redz Modified with Raid Timers
-
+-- Official Redz Modified with Raid Timers (Mobile Check)
 local Settings = _G.Settings or {
     JoinTeam = "Pirates"; -- Pirates/Marines
     Translator = true; -- true/false
@@ -29,7 +28,7 @@ end
 
 -- Функція для створення GUI таймерів
 local function CreateRaidTimers()
-    -- Створення GUI
+    -- Перевірка на мобільну платформу
     local player = game.Players.LocalPlayer
     local screenGui = Instance.new("ScreenGui")
     screenGui.Parent = player.PlayerGui
