@@ -1,129 +1,82 @@
--- Official Redz Modified with Raid Timers (Mobile Check)
-local Settings = _G.Settings or {
-    JoinTeam = "Pirates"; -- Pirates/Marines
-    Translator = true; -- true/false
-}
+-- Створення GUI
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local InputBox = Instance.new("TextBox")
+local EnterButton = Instance.new("TextButton")
+local GenerateButton = Instance.new("TextButton")
+local Title = Instance.new("TextLabel")
 
--- Автовступ до команди
-local function AutoJoinTeam()
-    if Settings.JoinTeam == "Pirates" or Settings.JoinTeam == "Marines" then
-        repeat
-            wait()
-            if game.Players.LocalPlayer.Team == nil then
-                local args = {
-                    [1] = Settings.JoinTeam
-                }
-                game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetTeam", unpack(args))
-            end
-        until game.Players.LocalPlayer.Team ~= nil
-    end
-end
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+ScreenGui.Name = "CodeGui"
 
--- Запуск автозміни мови інтерфейсу
-local function AutoTranslate()
-    if Settings.Translator then
-        game:GetService("Players").LocalPlayer.PlayerGui.Main.Menu.Language.Visible = false
-    end
-end
+Frame.Parent = ScreenGui
+Frame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+Frame.Size = UDim2.new(0, 300, 0, 180)
+Frame.Position = UDim2.new(0.5, -150, 0.5, -90)
+Frame.BorderSizePixel = 0
+Frame.Active = true
+Frame.Draggable = true
 
--- Функція для створення GUI таймерів
-local function CreateRaidTimers()
-    local player = game.Players.LocalPlayer
-    local playerGui = player:WaitForChild("PlayerGui")
+Title.Parent = Frame
+Title.Text = "Blox Fruits Code GUI"
+Title.Size = UDim2.new(1, 0, 0, 30)
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.BackgroundTransparency = 1
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 18
 
-    -- Створення GUI для таймерів
-    local screenGui = Instance.new("ScreenGui")
-    screenGui.Parent = playerGui
+InputBox.Parent = Frame
+InputBox.Position = UDim2.new(0.1, 0, 0.3, 0)
+InputBox.Size = UDim2.new(0.8, 0, 0.2, 0)
+InputBox.PlaceholderText = "Введи або згенеруй код"
+InputBox.Text = ""
+InputBox.Font = Enum.Font.Code
+InputBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+InputBox.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 
-    -- Стиль для таймерів
-    local timerStyle = {
-        BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-        TextColor3 = Color3.fromRGB(255, 255, 255),
-        Font = Enum.Font.GothamBold,
-        TextSize = 20,
-        TextStrokeTransparency = 0.8,
-        TextStrokeColor3 = Color3.fromRGB(0, 0, 0),
-    }
+EnterButton.Parent = Frame
+EnterButton.Position = UDim2.new(0.1, 0, 0.6, 0)
+EnterButton.Size = UDim2.new(0.35, 0, 0.2, 0)
+EnterButton.Text = "Ввести"
+EnterButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+EnterButton.Font = Enum.Font.GothamBold
+EnterButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 
-    -- Створення текстових полів для таймерів
-    local pirateRaidTimer = Instance.new("TextLabel")
-    pirateRaidTimer.Size = UDim2.new(0, 200, 0, 50)
-    pirateRaidTimer.Position = UDim2.new(0.5, -100, 0, 20)  -- Центр
-    pirateRaidTimer.Text = "🛡 Піратський рейд через: 00:00"
-    pirateRaidTimer.Parent = screenGui
-    for key, value in pairs(timerStyle) do
-        pirateRaidTimer[key] = value
-    end
+GenerateButton.Parent = Frame
+GenerateButton.Position = UDim2.new(0.55, 0, 0.6, 0)
+GenerateButton.Size = UDim2.new(0.35, 0, 0.2, 0)
+GenerateButton.Text = "Генерувати"
+GenerateButton.BackgroundColor3 = Color3.fromRGB(0, 255, 100)
+GenerateButton.Font = Enum.Font.GothamBold
+GenerateButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 
-    local factoryRaidTimer = Instance.new("TextLabel")
-    factoryRaidTimer.Size = UDim2.new(0, 200, 0, 50)
-    factoryRaidTimer.Position = UDim2.new(0.5, -100, 0, 70) -- Під першим таймером
-    factoryRaidTimer.Text = "🏭 Фабрика через: 00:00"
-    factoryRaidTimer.Parent = screenGui
-    for key, value in pairs(timerStyle) do
-        factoryRaidTimer[key] = value
-    end
-
-    -- Функція для обчислення часу до рейду
-    local function UpdateRaidTimers()
-        while true do
-            wait(1)  -- Оновлювати кожну секунду
-
-            local ServerAge = math.floor(workspace.DistributedGameTime / 60) -- Вік сервера в хвилинах
-
-            local TimeUntilPirateRaid = 75 - (ServerAge % 75) -- Піратський рейд кожні 75 хвилин
-            local TimeUntilFactoryRaid = 90 - (ServerAge % 90) -- Фабрика кожні 90 хвилин
-
-            -- Форматування часу до рейдів
-            local minutesPirate = math.floor(TimeUntilPirateRaid)
-            local secondsPirate = math.floor((TimeUntilPirateRaid - minutesPirate) * 60)
-
-            local minutesFactory = math.floor(TimeUntilFactoryRaid)
-            local secondsFactory = math.floor((TimeUntilFactoryRaid - minutesFactory) * 60)
-
-            -- Оновлення тексту таймерів
-            pirateRaidTimer.Text = "🛡 Піратський рейд через: " .. string.format("%02d:%02d", minutesPirate, secondsPirate)
-            factoryRaidTimer.Text = "🏭 Фабрика через: " .. string.format("%02d:%02d", minutesFactory, secondsFactory)
-
-            -- Якщо залишилось менше 5 хвилин - показуємо повідомлення
-            if TimeUntilPirateRaid <= 5 then
-                pcall(function()
-                    game.StarterGui:SetCore("SendNotification", {
-                        Title = "⚔️ Піратський Рейд",
-                        Text = "Почнеться через " .. TimeUntilPirateRaid .. " хвилин!",
-                        Duration = 10
-                    })
-                end)
-            end
-
-            if TimeUntilFactoryRaid <= 5 then
-                pcall(function()
-                    game.StarterGui:SetCore("SendNotification", {
-                        Title = "🏭 Рейд Фабрики",
-                        Text = "Фабрика відкриється через " .. TimeUntilFactoryRaid .. " хвилин!",
-                        Duration = 10
-                    })
-                end)
-            end
+-- Генератор випадкових кодів
+local function generateCode()
+    local charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    local function randSeg()
+        local s = ""
+        for _ = 1, 4 do
+            local i = math.random(1, #charset)
+            s = s .. charset:sub(i, i)
         end
+        return s
     end
-
-    -- Оновлюємо таймери
-    UpdateRaidTimers()
+    return "BF-PLUSH-" .. randSeg() .. "-" .. randSeg()
 end
 
--- Основний запуск
-pcall(function()
-    AutoJoinTeam()
-    AutoTranslate()
-    CreateRaidTimers()
+-- Обробка кнопок
+GenerateButton.MouseButton1Click:Connect(function()
+    InputBox.Text = generateCode()
 end)
 
--- Вітальне повідомлення
-pcall(function()
-    game.StarterGui:SetCore("SendNotification", {
-        Title = "✅ REDZ Loaded",
-        Text = "Модифікована версія активована!",
-        Duration = 5
-    })
+EnterButton.MouseButton1Click:Connect(function()
+    local code = InputBox.Text
+    if code ~= "" then
+        local success, err = pcall(function()
+            game:GetService("ReplicatedStorage").Remotes.Redeem:InvokeServer(code)
+        end)
+        if not success then
+            warn("Не вдалося ввести код: " .. tostring(err))
+        end
+    end
 end)
